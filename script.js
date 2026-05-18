@@ -1,1 +1,1 @@
-/* Full premium JS here */
+document.addEventListener('DOMContentLoaded', () => { console.log('l4b3d loaded'); });
