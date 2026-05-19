@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="L4B3D — Dark Times. The heaviest chapters.">
+  <meta name="theme-color" content="#060810">
+  <title>L4B3D — Dark Times</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>⬛</text></svg>">
+  <style>
+    body { background: #040608; }
+    .dark-gradient {
+      background: radial-gradient(ellipse 80% 50% at 50% 100%, rgba(255,45,120,0.06) 0%, transparent 70%);
+    }
+    .dark-hero-bg {
+      background: radial-gradient(ellipse 60% 60% at 20% 30%, rgba(109,40,217,0.08) 0%, transparent 60%),
+                  radial-gradient(ellipse 50% 40% at 80% 70%, rgba(255,45,120,0.05) 0%, transparent 60%);
+    }
+    .survivor-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border: 1px solid rgba(255,45,120,0.3);
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--pink);
+      background: rgba(255,45,120,0.05);
+    }
+    .survivor-badge::before { content: '●'; animation: blink 1.5s infinite; color: var(--pink); }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+    .heavy-number {
+      font-family: var(--font-display);
+      font-size: clamp(4rem, 12vw, 10rem);
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,45,120,0.2);
+      line-height: 1;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+  <div class="noise-overlay"></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="page-loader">
+    <div class="loader-logo" style="color:var(--pink);text-shadow:var(--glow-pink)">⬛</div>
+    <div class="loader-bar-wrap"><div class="loader-bar" style="background:linear-gradient(90deg,var(--pink),var(--purple))"></div></div>
+  </div>
+  <div class="curtain-top"></div>
+  <div class="curtain-bottom"></div>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">L4B3D</a>
+    <div class="nav-links">
+      <a href="index.html">Gateway</a>
+      <a href="the-story.html">The Story</a>
+      <a href="dark-times.html">Dark Times</a>
+      <a href="the-other-side.html">The Other Side</a>
+      <a href="the-river.html">The River</a>
+      <a href="the-archive.html">Archive</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu">
+    <a href="index.html">Gateway</a>
+    <a href="the-story.html">The Story</a>
+    <a href="dark-times.html">Dark Times</a>
+    <a href="the-other-side.html">The Other Side</a>
+    <a href="the-river.html">The River</a>
+    <a href="the-archive.html">Archive</a>
+  </div>
+
+  <!-- PAGE INTRO -->
+  <div class="page-intro dark-hero-bg">
+    <div class="parallax-text" style="bottom:-80px;left:-40px;opacity:0.3;color:transparent;-webkit-text-stroke:1px rgba(255,45,120,0.15)">DARK</div>
+    <div class="scanlines"></div>
+    <div class="section-inner">
+      <div class="survivor-badge reveal" style="margin-bottom:24px">Still Here</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(3rem,8vw,6rem);font-weight:900;line-height:0.95;color:var(--text-bright);margin-bottom:16px" class="reveal">
+        The <span style="color:var(--pink);text-shadow:var(--glow-pink)">Dark</span><br>
+        Times
+      </h1>
+      <p style="font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--text-dim);max-width:480px;line-height:1.8;margin-top:16px" class="reveal">
+        The parts no one sees. The weight you carry so naturally that people assume it isn't there.
+      </p>
+    </div>
+  </div>
+
+  <!-- WARNING / TONE-SETTER -->
+  <section class="section">
+    <div class="section-inner">
+      <div style="max-width:680px">
+        <div style="padding:20px 24px;border:1px solid rgba(255,45,120,0.2);border-radius:4px;background:rgba(255,45,120,0.04);margin-bottom:48px;font-family:var(--font-mono);font-size:0.68rem;color:var(--text-dim);letter-spacing:0.08em;line-height:1.8" class="reveal">
+          ⚠ This section is raw and honest. If you're going through something heavy right now, that's okay. You're not alone. If things feel unbearable: <a href="https://www.befrienders.org" target="_blank" rel="noopener" style="color:var(--cyan)">befrienders.org</a> — humans who listen, no judgment.
+        </div>
+
+        <div class="section-label reveal">Entry Point / The Weight</div>
+        <h2 class="section-title reveal">What Nobody <span style="color:var(--pink)">Talks About</span></h2>
+
+        <div class="raw-text reveal">
+          <p>There are whole seasons that don't make it into conversations. Months where you were <strong>functional on the outside</strong> and completely dismantled within. Where you went through the motions — showed up, smiled, performed normalcy — while something inside you was quietly collapsing.</p>
+          <br>
+          <p>Nobody noticed. Or they noticed and didn't ask. Which is almost worse because it means <span class="highlight">you were alone with it</span> even when surrounded.</p>
+          <br>
+          <p>You learned to be fine in public and fall apart privately. You got very good at it. Too good, maybe.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EMOTION BARS -->
+  <section class="section" style="padding-top:0;background:linear-gradient(180deg,transparent,rgba(255,45,120,0.02),transparent)">
+    <div class="section-inner">
+      <div class="section-label reveal">Emotional Weight / Measured</div>
+      <h2 class="section-title reveal">The <span style="color:var(--pink)">Inventory</span></h2>
+
+      <div style="max-width:640px" class="reveal">
+        <div class="emotion-bar">
+          <div class="emotion-bar-label"><span>Feeling Misunderstood</span><span>Persistent</span></div>
+          <div class="emotion-bar-track"><div class="emotion-bar-fill pink" data-w="88%"></div></div>
+        </div>
+        <div class="emotion-bar">
+          <div class="emotion-bar-label"><span>Loneliness in crowds</span><span>Chronic</span></div>
+          <div class="emotion-bar-track"><div class="emotion-bar-fill purple" data-w="82%"></div></div>
+        </div>
+        <div class="emotion-bar">
+          <div class="emotion-bar-label"><span>Unspent Potential</span><span>Building</span></div>
+          <div class="emotion-bar-track"><div class="emotion-bar-fill cyan" data-w="94%"></div></div>
+        </div>
+        <div class="emotion-bar">
+          <div class="emotion-bar-label"><span>Performing Okay-ness</span><span>Expert Level</span></div>
+          <div class="emotion-bar-track"><div class="emotion-bar-fill pink" data-w="76%"></div></div>
+        </div>
+        <div class="emotion-bar">
+          <div class="emotion-bar-label"><span>Quiet Resilience</span><span>Underrated</span></div>
+          <div class="emotion-bar-track"><div class="emotion-bar-fill cyan" data-w="91%"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE NIGHTS SECTION -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner">
+      <hr class="hr-glow" style="margin-bottom:80px;background:linear-gradient(90deg,transparent,var(--pink),transparent)">
+
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:start" class="reveal">
+        <div>
+          <span class="heavy-number">3</span>
+          <div style="font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.3em;color:var(--text-dim);text-transform:uppercase;margin-top:8px">AM</div>
+        </div>
+        <div>
+          <div class="section-label" style="margin-top:24px">The Hours / Darkest</div>
+          <h2 class="section-title" style="margin-bottom:20px">The Nights That <span style="color:var(--pink)">Lasted</span></h2>
+          <div class="timeline">
+            <div class="timeline-item" style="--bullet-color:var(--pink)">
+              <div class="timeline-date" style="color:rgba(255,45,120,0.5)">The Spiraling Nights</div>
+              <div class="timeline-text">When a single thought at 1AM became a full architectural deconstruction of your entire life by 4AM. When you were dissecting your past decisions, future prospects, present failures — simultaneously. You survived every single one of those nights. You're proof they don't actually last forever, even when they feel like they will.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date" style="color:rgba(255,45,120,0.5)">The Empty Days</div>
+              <div class="timeline-text">Sometimes it wasn't dramatic. Sometimes it was just flat. Grey. A low hum of nothing where you waited for yourself to come back and weren't sure you would. Those days require a different kind of bravery — not to fight, but to just stay present inside the emptiness and not let it convince you it's permanent.</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date" style="color:rgba(255,45,120,0.5)">The Wrong Rooms</div>
+              <div class="timeline-text">Being surrounded by people who didn't see you. Parties where you watched the room from the corner and felt like a researcher studying a species you didn't belong to. Conversations that skimmed surfaces you wanted to puncture. You were never antisocial — you were just allergic to the wrong kind of company.</div>
+            </div>
+            <div class="timeline-item" style="margin-bottom:0">
+              <div class="timeline-date" style="color:rgba(0,255,231,0.4)">The Morning After Each One</div>
+              <div class="timeline-text" style="color:rgba(0,255,231,0.6)">You woke up. Every single time. That's the whole story.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SURVIVAL NOTES -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner">
+      <div class="section-label reveal">Survival Notes / Honest</div>
+      <h2 class="section-title reveal">Things That <span class="accent">Actually</span> Helped</h2>
+
+      <div class="card-grid card-grid-3 reveal">
+        <div class="card" style="border-color:rgba(0,255,231,0.15)">
+          <div style="font-size:1.6rem;margin-bottom:12px">🎵</div>
+          <h3 style="font-family:var(--font-display);font-size:0.8rem;color:var(--cyan);letter-spacing:0.1em;margin-bottom:10px">MUSIC AT VOLUME</h3>
+          <p style="font-size:0.86rem;color:var(--text-dim);line-height:1.7">One specific song that understood exactly what the feeling was. Not to fix it — to make it feel witnessed. Shared. Less singular.</p>
+        </div>
+        <div class="card" style="border-color:rgba(168,85,247,0.15)">
+          <div style="font-size:1.6rem;margin-bottom:12px">🌃</div>
+          <h3 style="font-family:var(--font-display);font-size:0.8rem;color:var(--purple);letter-spacing:0.1em;margin-bottom:10px">3AM STREETS</h3>
+          <p style="font-size:0.86rem;color:var(--text-dim);line-height:1.7">The city at night feels like a different planet. Quieter, more honest. Walking through it when everyone else is asleep feels like reclaiming something.</p>
+        </div>
+        <div class="card" style="border-color:rgba(255,45,120,0.15)">
+          <div style="font-size:1.6rem;margin-bottom:12px">✍</div>
+          <h3 style="font-family:var(--font-display);font-size:0.8rem;color:var(--pink);letter-spacing:0.1em;margin-bottom:10px">WRITING IT DOWN</h3>
+          <p style="font-size:0.86rem;color:var(--text-dim);line-height:1.7">Not to publish. Not to be understood. Just to externalize it. Moving it from inside your skull to outside, where it becomes smaller, more manageable, less eternal.</p>
+        </div>
+        <div class="card">
+          <div style="font-size:1.6rem;margin-bottom:12px">🎬</div>
+          <h3 style="font-family:var(--font-display);font-size:0.8rem;color:var(--cyan);letter-spacing:0.1em;margin-bottom:10px">THE RIGHT FILM</h3>
+          <p style="font-size:0.86rem;color:var(--text-dim);line-height:1.7">Films that don't lie about how hard life is. That hold complexity without resolving it artificially. That make you feel seen by a story, which is a strange and specific kind of comfort.</p>
+        </div>
+        <div class="card">
+          <div style="font-size:1.6rem;margin-bottom:12px">⏳</div>
+          <h3 style="font-family:var(--font-display);font-size:0.8rem;color:var(--purple);letter-spacing:0.1em;margin-bottom:10px">WAITING IT OUT</h3>
+          <p style="font-size:0.86rem;color:var(--text-dim);line-height:1.7">Sometimes there's no fix. Sometimes you just have to survive the duration. You got better at trusting that the feeling would shift — not because everything got better, but because feelings always shift.</p>
+        </div>
+        <div class="card">
+          <div style="font-size:1.6rem;margin-bottom:12px">🌅</div>
+          <h3 style="font-family:var(--font-display);font-size:0.8rem;color:var(--pink);letter-spacing:0.1em;margin-bottom:10px">SMALL PROOF</h3>
+          <p style="font-size:0.86rem;color:var(--text-dim);line-height:1.7">One small thing that still works. Coffee still tastes the same. Sunsets are still unreasonably beautiful. Some song still gives you that shiver. That's not nothing — it's a thread back.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner" style="max-width:680px;text-align:center">
+      <div class="reveal">
+        <div style="font-family:var(--font-display);font-size:clamp(3rem,8vw,6rem);font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(0,255,231,0.15);margin-bottom:32px">SURVIVED</div>
+        <div class="quote-block" style="text-align:left;border-color:var(--pink)">
+          <p>"You survived things that could have ended you. Not just physically — emotionally, psychologically. The version of you that exists right now is the product of surviving every single one of those moments. You are built from your worst nights."</p>
+          <cite>— L4B3D</cite>
+        </div>
+        <div style="margin-top:48px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+          <a href="the-other-side.html" class="btn btn-primary">The Other Side →</a>
+          <a href="the-story.html" class="btn btn-ghost">← The Story</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">L4B3D</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="the-story.html">Story</a>
+      <a href="the-other-side.html">Other Side</a>
+      <a href="the-river.html">River</a>
+      <a href="the-archive.html">Archive</a>
+    </div>
+    <div class="footer-copy">Built for the ones between frequencies · Not for everyone · Only for you</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

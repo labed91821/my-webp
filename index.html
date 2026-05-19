@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="L4B3D — A digital sanctuary for the ones who feel too much and belong somewhere else.">
+  <meta name="theme-color" content="#060810">
+  <title>L4B3D — Gateway</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>🌌</text></svg>">
+</head>
+<body>
+
+  <!-- CURSOR -->
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+
+  <!-- NOISE -->
+  <div class="noise-overlay"></div>
+
+  <!-- PARTICLES -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- LOADER -->
+  <div class="page-loader">
+    <div class="loader-logo">L4B3D</div>
+    <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  </div>
+  <div class="curtain-top"></div>
+  <div class="curtain-bottom"></div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">L4B3D</a>
+    <div class="nav-links">
+      <a href="index.html">Gateway</a>
+      <a href="the-story.html">The Story</a>
+      <a href="dark-times.html">Dark Times</a>
+      <a href="the-other-side.html">The Other Side</a>
+      <a href="the-river.html">The River</a>
+      <a href="the-archive.html">Archive</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu">
+    <a href="index.html">Gateway</a>
+    <a href="the-story.html">The Story</a>
+    <a href="dark-times.html">Dark Times</a>
+    <a href="the-other-side.html">The Other Side</a>
+    <a href="the-river.html">The River</a>
+    <a href="the-archive.html">Archive</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg-gradient"></div>
+    <div class="scanlines"></div>
+
+    <!-- Big background text -->
+    <div class="parallax-text" style="top:50%;left:50%;transform:translate(-50%,-50%);">L4B3D</div>
+
+    <div class="hero-eyebrow">A Sanctuary / Est. Somewhere In The Dark</div>
+
+    <h1 class="hero-title">
+      You Were<br>
+      <span class="glitch" data-text="Never Lost">Never Lost</span><br>
+      <span style="font-size:0.45em;color:var(--text-dim);letter-spacing:0.1em">just between frequencies</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      For those who feel too much, belong somewhere else,
+      and carry an entire world inside them that no one ever asks about.
+    </p>
+
+    <div class="hero-cta-group">
+      <a href="the-story.html" class="btn btn-primary">Enter The Story</a>
+      <a href="the-archive.html" class="btn btn-ghost">Open The Archive</a>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div style="position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fade-up 1s 2s forwards">
+      <span style="font-family:var(--font-mono);font-size:0.55rem;letter-spacing:0.3em;color:var(--text-dim)">SCROLL</span>
+      <div style="width:1px;height:40px;background:linear-gradient(180deg,var(--cyan),transparent);animation:scroll-pulse 2s infinite"></div>
+    </div>
+  </section>
+
+  <style>
+    @keyframes scroll-pulse {
+      0%,100% { opacity:0.4; transform:scaleY(1); }
+      50%      { opacity:1; transform:scaleY(1.1); }
+    }
+  </style>
+
+  <!-- GATEWAY SECTION -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-label reveal">Navigate The Space</div>
+      <h2 class="section-title reveal">
+        Six <span class="accent">Rooms</span>,<br>One World
+      </h2>
+
+      <div class="gateway-grid reveal">
+        <a href="the-story.html" class="gateway-card">
+          <div class="gateway-icon">✦</div>
+          <div class="gateway-num">01 / 06</div>
+          <div class="gateway-title">The Story</div>
+          <div class="gateway-desc">Your solo journey. Intimate, reflective, honest — this one is purely about you.</div>
+          <div class="gateway-arrow">Enter <span>→</span></div>
+        </a>
+        <a href="dark-times.html" class="gateway-card">
+          <div class="gateway-icon">⬛</div>
+          <div class="gateway-num">02 / 06</div>
+          <div class="gateway-title">Dark Times</div>
+          <div class="gateway-desc">The heaviest chapters. Raw, unfiltered. For the nights you barely survived.</div>
+          <div class="gateway-arrow">Enter <span>→</span></div>
+        </a>
+        <a href="the-other-side.html" class="gateway-card">
+          <div class="gateway-icon">◈</div>
+          <div class="gateway-num">03 / 06</div>
+          <div class="gateway-title">The Other Side</div>
+          <div class="gateway-desc">Bittersweet relational stories. The people who shaped you — in light and shadow.</div>
+          <div class="gateway-arrow">Enter <span>→</span></div>
+        </a>
+        <a href="the-river.html" class="gateway-card">
+          <div class="gateway-icon">〰</div>
+          <div class="gateway-num">04 / 06</div>
+          <div class="gateway-title">The River</div>
+          <div class="gateway-desc">Visual notes, music, poetry, pictures floating by like time itself.</div>
+          <div class="gateway-arrow">Enter <span>→</span></div>
+        </a>
+        <a href="the-archive.html" class="gateway-card" style="border:1px solid rgba(0,255,231,0.1);position:relative;">
+          <div style="position:absolute;top:12px;right:12px;font-family:var(--font-mono);font-size:0.5rem;letter-spacing:0.1em;padding:4px 8px;background:rgba(0,255,231,0.08);border:1px solid rgba(0,255,231,0.2);border-radius:2px;color:var(--cyan)">SHOWCASE</div>
+          <div class="gateway-icon">◎</div>
+          <div class="gateway-num">05 / 06</div>
+          <div class="gateway-title">The Archive</div>
+          <div class="gateway-desc">Spotify Wrapped for life. Every film, every obsession. Your cultural DNA.</div>
+          <div class="gateway-arrow" style="color:var(--cyan)">Enter <span>→</span></div>
+        </a>
+        <div class="gateway-card" style="display:flex;align-items:center;justify-content:center;background:var(--bg);cursor:default">
+          <div style="text-align:center">
+            <div style="font-family:var(--font-mono);font-size:0.55rem;letter-spacing:0.3em;color:var(--text-dim);margin-bottom:8px">YOU ARE HERE</div>
+            <div style="font-family:var(--font-display);font-size:2rem;color:rgba(255,255,255,0.06);font-weight:900">∅</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOOD SECTION -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner">
+      <hr class="hr-glow" style="margin-bottom:80px">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center" class="reveal">
+        <div>
+          <div class="section-label">Aesthetic / Frequency</div>
+          <h2 class="section-title" style="margin-bottom:20px">
+            Feels Like<br>
+            <span class="accent-pink">3AM</span> Everywhere
+          </h2>
+          <p style="font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--text-dim);line-height:1.8;margin-bottom:32px">
+            This place was built for people who've sat alone in a crowded room and felt more awake than everyone there.
+            Smart. Wasted. Full of something no one has a word for yet.
+          </p>
+          <div class="genre-cloud">
+            <span class="genre-bubble">Nostalgia</span>
+            <span class="genre-bubble">Loneliness</span>
+            <span class="genre-bubble">Potential</span>
+            <span class="genre-bubble">3AM Energy</span>
+            <span class="genre-bubble">Melancholia</span>
+            <span class="genre-bubble">Cyberpunk</span>
+            <span class="genre-bubble">Late Night</span>
+            <span class="genre-bubble">Unfinished</span>
+          </div>
+        </div>
+        <div>
+          <div class="quote-block">
+            <p>"The loneliest people are the kindest. The saddest people smile the brightest. The most damaged people are the wisest. All because they do not wish to see anyone else suffer the way they do."</p>
+            <cite>— Unknown, but felt</cite>
+          </div>
+          <div class="quote-block" style="border-left-color:var(--pink);margin-top:0">
+            <p>"You carry so much love in you. And no one taught you where to put it."</p>
+            <cite>— r/3amthoughts</cite>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MUSIC TEASER -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner">
+      <div class="section-label reveal">Now Playing / Always</div>
+      <h2 class="section-title reveal">The <span class="accent">Frequency</span></h2>
+
+      <div style="display:flex;flex-direction:column;gap:12px" class="reveal">
+        <div class="mini-player" data-src="assets/music/track1.mp3">
+          <div class="mini-player-thumb-ph">🌙</div>
+          <div class="mini-player-info">
+            <div class="mini-player-title">The Night We Met</div>
+            <div class="mini-player-artist">Lord Huron</div>
+          </div>
+          <div class="waveform">
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+          </div>
+          <button class="mini-player-btn" title="Play/Pause">▶</button>
+        </div>
+
+        <div class="mini-player" data-src="assets/music/track2.mp3">
+          <div class="mini-player-thumb-ph">🌹</div>
+          <div class="mini-player-info">
+            <div class="mini-player-title">Apocalypse</div>
+            <div class="mini-player-artist">Cigarettes After Sex</div>
+          </div>
+          <div class="waveform">
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+            <div class="waveform-bar"></div>
+          </div>
+          <button class="mini-player-btn" title="Play/Pause">▶</button>
+        </div>
+      </div>
+
+      <div style="margin-top:32px;text-align:right">
+        <a href="the-archive.html" class="btn btn-ghost" style="font-size:0.65rem">Full Archive →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">L4B3D</div>
+    <div class="footer-links">
+      <a href="the-story.html">Story</a>
+      <a href="dark-times.html">Dark Times</a>
+      <a href="the-other-side.html">Other Side</a>
+      <a href="the-river.html">River</a>
+      <a href="the-archive.html">Archive</a>
+    </div>
+    <div class="footer-copy">Built for the ones between frequencies · Not for everyone · Only for you</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

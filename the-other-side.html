@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="L4B3D — The Other Side. Bittersweet relational stories.">
+  <meta name="theme-color" content="#060810">
+  <title>L4B3D — The Other Side</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>◈</text></svg>">
+  <style>
+    .person-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, box-shadow 0.3s, transform 0.4s var(--ease-out-expo);
+    }
+    .person-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(168,85,247,0.3);
+      box-shadow: var(--glow-purple);
+    }
+    .person-card-initial {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      flex-shrink: 0;
+    }
+    .person-card-role {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .person-card-name {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-bright);
+      margin-bottom: 16px;
+    }
+    .person-card-text {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--text-dim);
+      line-height: 1.8;
+    }
+    .person-card-tag {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 4px 12px;
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      border: 1px solid;
+    }
+    .relationship-spectrum {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .rs-label {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+      white-space: nowrap;
+    }
+    .rs-bar {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      position: relative;
+      background: rgba(255,255,255,0.06);
+    }
+    .rs-bar-fill {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+  <div class="noise-overlay"></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="page-loader">
+    <div class="loader-logo" style="color:var(--purple);text-shadow:var(--glow-purple)">◈</div>
+    <div class="loader-bar-wrap"><div class="loader-bar" style="background:linear-gradient(90deg,var(--purple),var(--pink))"></div></div>
+  </div>
+  <div class="curtain-top"></div>
+  <div class="curtain-bottom"></div>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">L4B3D</a>
+    <div class="nav-links">
+      <a href="index.html">Gateway</a>
+      <a href="the-story.html">The Story</a>
+      <a href="dark-times.html">Dark Times</a>
+      <a href="the-other-side.html">The Other Side</a>
+      <a href="the-river.html">The River</a>
+      <a href="the-archive.html">Archive</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu">
+    <a href="index.html">Gateway</a>
+    <a href="the-story.html">The Story</a>
+    <a href="dark-times.html">Dark Times</a>
+    <a href="the-other-side.html">The Other Side</a>
+    <a href="the-river.html">The River</a>
+    <a href="the-archive.html">Archive</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="page-intro" style="background:radial-gradient(ellipse 70% 60% at 30% 40%,rgba(168,85,247,0.1) 0%,transparent 70%)">
+    <div class="parallax-text" style="top:50%;right:-80px;transform:translateY(-50%);opacity:0.3">THEM</div>
+    <div class="scanlines"></div>
+    <div class="section-inner">
+      <div class="section-label reveal">Chapter 03 / Relationships</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(3rem,8vw,6rem);font-weight:900;line-height:0.95;color:var(--text-bright);margin-bottom:16px" class="reveal">
+        The <span style="color:var(--purple);text-shadow:var(--glow-purple)">Other</span><br>Side
+      </h1>
+      <p style="font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--text-dim);max-width:500px;line-height:1.8;margin-top:16px" class="reveal">
+        The people who shaped you. The ones you carry. The ones who left anyway.
+        The ones who stayed, even when it cost them.
+      </p>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <section class="section">
+    <div class="section-inner">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start">
+        <div class="reveal">
+          <div class="section-label">Context / Connections</div>
+          <h2 class="section-title">The People Who <span class="accent">Changed</span> You</h2>
+          <div class="raw-text">
+            <p>You have a theory about people. That everyone is carrying something invisible — not just you. That the person who hurt you most was probably hurting in exactly the same way, just didn't have the language for it.</p>
+            <br>
+            <p>That doesn't make it okay. But it makes it <strong>less personal</strong>. And sometimes that's the only window out of the room the pain locks you in.</p>
+            <br>
+            <p>Some people came and broke you a little. Some came and quietly built something. Most did both, depending on the day.</p>
+          </div>
+        </div>
+        <div class="reveal reveal-delay-2">
+          <div class="quote-block" style="border-color:var(--purple)">
+            <p>"I think about all the versions of people I'll never meet — the ones they were before something happened to them. I think I would have liked them."</p>
+            <cite>— A quiet 3AM thought</cite>
+          </div>
+          <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap">
+            <div class="stat-pill">
+              <span class="stat-pill-val" style="color:var(--purple)">Few</span>
+              <span style="color:var(--text-dim);font-size:0.68rem">Who really saw you</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-pill-val" style="color:var(--pink)">Many</span>
+              <span style="color:var(--text-dim);font-size:0.68rem">Who almost did</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERSON CARDS -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner">
+      <div class="section-label reveal">The Cast / Unnamed</div>
+      <h2 class="section-title reveal">The Ones Who <span style="color:var(--purple)">Mattered</span></h2>
+
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px" class="card-grid">
+
+        <!-- The one who left -->
+        <div class="person-card reveal">
+          <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px">
+            <div class="person-card-initial" style="background:rgba(255,45,120,0.1);border:1px solid rgba(255,45,120,0.3);color:var(--pink)">∅</div>
+            <div>
+              <div class="person-card-role" style="color:var(--pink)">The One Who Left</div>
+              <div class="person-card-name">The Absence</div>
+            </div>
+          </div>
+          <div class="person-card-text">
+            They didn't leave all at once. That's the part no one tells you about. It was incremental — a degree of coolness here, an unreturned message there. Until one day you realized you were the only one still showing up.
+            <br><br>
+            You spent a long time trying to figure out what you did wrong. The answer, which took too long to arrive, is: nothing. Some people leave because of themselves, not because of you.
+          </div>
+          <span class="person-card-tag" style="border-color:rgba(255,45,120,0.3);color:var(--pink)">Taught you: How to let go</span>
+          <div class="relationship-spectrum">
+            <span class="rs-label">Painful</span>
+            <div class="rs-bar">
+              <div class="rs-bar-fill" style="width:85%;background:linear-gradient(90deg,var(--pink),rgba(255,45,120,0.4))"></div>
+            </div>
+            <span class="rs-label">Formative</span>
+          </div>
+        </div>
+
+        <!-- The one who stayed -->
+        <div class="person-card reveal reveal-delay-2">
+          <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px">
+            <div class="person-card-initial" style="background:rgba(0,255,231,0.1);border:1px solid rgba(0,255,231,0.3);color:var(--cyan)">◈</div>
+            <div>
+              <div class="person-card-role" style="color:var(--cyan)">The One Who Stayed</div>
+              <div class="person-card-name">The Constant</div>
+            </div>
+          </div>
+          <div class="person-card-text">
+            They didn't make a big announcement about it. They just kept showing up. During the ugly parts. During the parts where you were unreachable. When you were certain you were too much for anyone to sustain interest in.
+            <br><br>
+            They're proof that the right kind of person doesn't need you to perform or translate yourself. You always thought that was a myth until they existed.
+          </div>
+          <span class="person-card-tag" style="border-color:rgba(0,255,231,0.3);color:var(--cyan)">Taught you: You're worth staying for</span>
+          <div class="relationship-spectrum">
+            <span class="rs-label">Grounding</span>
+            <div class="rs-bar">
+              <div class="rs-bar-fill" style="width:90%;background:linear-gradient(90deg,var(--cyan),rgba(0,255,231,0.4))"></div>
+            </div>
+            <span class="rs-label">Essential</span>
+          </div>
+        </div>
+
+        <!-- The almost -->
+        <div class="person-card reveal">
+          <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px">
+            <div class="person-card-initial" style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.3);color:var(--purple)">≈</div>
+            <div>
+              <div class="person-card-role" style="color:var(--purple)">The Almost</div>
+              <div class="person-card-name">The What-If</div>
+            </div>
+          </div>
+          <div class="person-card-text">
+            The most painful category. Someone who was everything — timing, connection, depth — except present. You were both interested and both avoiding the reality of that. You circled each other for too long and then the moment passed.
+            <br><br>
+            You still wonder about the alternate version of that story. That's what "almost" people leave you: a parallel life you can almost see.
+          </div>
+          <span class="person-card-tag" style="border-color:rgba(168,85,247,0.3);color:var(--purple)">Taught you: Timing is everything</span>
+          <div class="relationship-spectrum">
+            <span class="rs-label">Bittersweet</span>
+            <div class="rs-bar">
+              <div class="rs-bar-fill" style="width:78%;background:linear-gradient(90deg,var(--purple),rgba(168,85,247,0.4))"></div>
+            </div>
+            <span class="rs-label">Unforgettable</span>
+          </div>
+        </div>
+
+        <!-- The mirror -->
+        <div class="person-card reveal reveal-delay-2">
+          <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px">
+            <div class="person-card-initial" style="background:rgba(255,45,120,0.1);border:1px solid rgba(255,45,120,0.2);color:var(--pink)">⌬</div>
+            <div>
+              <div class="person-card-role" style="color:var(--pink)">The Mirror</div>
+              <div class="person-card-name">The Difficult One</div>
+            </div>
+          </div>
+          <div class="person-card-text">
+            The one who challenged you in the least comfortable ways. Who reflected back parts of you that you hadn't acknowledged — your avoidance, your patterns, your self-protection mechanisms wearing disguises.
+            <br><br>
+            You didn't always like what you saw. But you needed to see it. They weren't kind about it, but they were accurate. And accuracy sometimes costs more than kindness.
+          </div>
+          <span class="person-card-tag" style="border-color:rgba(255,45,120,0.2);color:var(--text-dim)">Taught you: Self-honesty</span>
+          <div class="relationship-spectrum">
+            <span class="rs-label">Challenging</span>
+            <div class="rs-bar">
+              <div class="rs-bar-fill" style="width:65%;background:linear-gradient(90deg,var(--pink),var(--purple))"></div>
+            </div>
+            <span class="rs-label">Necessary</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- BITTERSWEET TRUTH -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner" style="max-width:720px">
+      <hr class="hr-glow" style="margin-bottom:80px;background:linear-gradient(90deg,transparent,var(--purple),transparent)">
+      <div class="section-label reveal">Bittersweet / The Truth</div>
+      <h2 class="section-title reveal">What Connections <span style="color:var(--purple)">Actually Are</span></h2>
+
+      <div class="reveal" style="display:flex;flex-direction:column;gap:24px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:28px 32px">
+          <div style="font-family:var(--font-display);font-size:0.7rem;letter-spacing:0.2em;color:var(--cyan);margin-bottom:12px">THE BITTERSWEET REALITY</div>
+          <p style="font-family:var(--font-serif);font-size:1.05rem;color:var(--text-dim);line-height:1.8">Most connections are seasonal. Not because people are bad — because growth requires movement. Holding someone who needs to go is the same as being held by someone who needs to stay. Both are forms of love done badly.</p>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:28px 32px">
+          <div style="font-family:var(--font-display);font-size:0.7rem;letter-spacing:0.2em;color:var(--pink);margin-bottom:12px">THE UNCOMFORTABLE PART</div>
+          <p style="font-family:var(--font-serif);font-size:1.05rem;color:var(--text-dim);line-height:1.8">You have also been someone's "the one who left." You have also been someone's "almost." You are simultaneously the protagonist of your story and a supporting character in theirs — and in their version, you might be the complicated one.</p>
+        </div>
+        <div style="background:var(--surface);border:1px solid rgba(0,255,231,0.15);border-radius:4px;padding:28px 32px">
+          <div style="font-family:var(--font-display);font-size:0.7rem;letter-spacing:0.2em;color:var(--purple);margin-bottom:12px">THE CONSOLATION</div>
+          <p style="font-family:var(--font-serif);font-size:1.05rem;color:var(--text);line-height:1.8">Every significant person you've known has changed your neurological architecture. They are literally part of how you think now. You carry them. That's not a burden — it's the closest thing to immortality either of you will experience.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:48px;display:flex;gap:16px;flex-wrap:wrap" class="reveal">
+        <a href="the-river.html" class="btn btn-primary">The River →</a>
+        <a href="dark-times.html" class="btn btn-ghost">← Dark Times</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">L4B3D</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="the-story.html">Story</a>
+      <a href="dark-times.html">Dark Times</a>
+      <a href="the-river.html">River</a>
+      <a href="the-archive.html">Archive</a>
+    </div>
+    <div class="footer-copy">Built for the ones between frequencies · Not for everyone · Only for you</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

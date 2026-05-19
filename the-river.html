@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="L4B3D — The River. Flowing visual notes, music, pictures with poetic overlays.">
+  <meta name="theme-color" content="#060810">
+  <title>L4B3D — The River</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>〰</text></svg>">
+  <style>
+    /* River-specific overrides */
+    .river-hero-bg {
+      background:
+        radial-gradient(ellipse 90% 60% at 10% 20%, rgba(0,255,231,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 80%, rgba(168,85,247,0.08) 0%, transparent 60%);
+    }
+
+    /* Floating masonry-ish layout */
+    .river-flow {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .river-col { display: flex; flex-direction: column; gap: 20px; }
+
+    /* Image polaroid */
+    .river-polaroid {
+      background: #0e1120;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s;
+    }
+    .river-polaroid:hover {
+      transform: rotate(0deg) translateY(-6px) scale(1.01);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), var(--glow-purple);
+      z-index: 10;
+    }
+    .river-polaroid-img {
+      width: 100%;
+      aspect-ratio: 4/3;
+      object-fit: cover;
+      filter: saturate(0.75) brightness(0.85);
+      transition: filter 0.4s;
+    }
+    .river-polaroid:hover .river-polaroid-img {
+      filter: saturate(1.1) brightness(0.95);
+    }
+    .river-polaroid-caption {
+      padding: 14px 16px 18px;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* Vertical text accent */
+    .river-vertical-text {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      color: var(--text-dim);
+      opacity: 0.4;
+      text-transform: uppercase;
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    /* Music track row */
+    .track-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    .track-row:last-child { border-bottom: none; }
+    .track-row:hover { background: var(--surface2); }
+    .track-num {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      width: 20px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .track-info { flex: 1; min-width: 0; }
+    .track-name {
+      font-weight: 600;
+      color: var(--text-bright);
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .track-artist {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+    .track-time {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      flex-shrink: 0;
+    }
+    .track-mood {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    /* Poem block */
+    .poem-block {
+      padding: 40px 40px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    .poem-block::before {
+      content: '≈';
+      position: absolute;
+      top: -30px; right: 20px;
+      font-size: 8rem;
+      color: rgba(0,255,231,0.04);
+      font-family: var(--font-display);
+      line-height: 1;
+    }
+    .poem-line {
+      font-family: var(--font-serif);
+      font-size: 1.05rem;
+      color: var(--text-dim);
+      line-height: 2;
+      display: block;
+    }
+    .poem-line.accent-line { color: var(--cyan); }
+    .poem-line.pink-line { color: var(--pink); }
+    .poem-line.indent { padding-left: 32px; }
+
+    /* Horizontal scroll strip */
+    .h-scroll-strip {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 12px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .h-scroll-strip::-webkit-scrollbar { height: 2px; }
+    .h-scroll-strip::-webkit-scrollbar-track { background: transparent; }
+    .h-scroll-strip::-webkit-scrollbar-thumb { background: var(--purple-dark); border-radius: 2px; }
+    .h-scroll-item {
+      flex-shrink: 0;
+      width: 220px;
+      scroll-snap-align: start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .h-scroll-item:hover { border-color: rgba(168,85,247,0.3); transform: translateY(-4px); }
+    .h-scroll-item-img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      filter: saturate(0.7);
+      transition: filter 0.3s;
+    }
+    .h-scroll-item:hover .h-scroll-item-img { filter: saturate(1.1); }
+    .h-scroll-item-label {
+      padding: 10px 12px;
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 900px) {
+      .river-flow { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .river-flow { grid-template-columns: 1fr; }
+      .poem-block { padding: 28px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+  <div class="noise-overlay"></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="page-loader">
+    <div class="loader-logo" style="color:var(--cyan);text-shadow:var(--glow-cyan)">〰</div>
+    <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  </div>
+  <div class="curtain-top"></div>
+  <div class="curtain-bottom"></div>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">L4B3D</a>
+    <div class="nav-links">
+      <a href="index.html">Gateway</a>
+      <a href="the-story.html">The Story</a>
+      <a href="dark-times.html">Dark Times</a>
+      <a href="the-other-side.html">The Other Side</a>
+      <a href="the-river.html">The River</a>
+      <a href="the-archive.html">Archive</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu">
+    <a href="index.html">Gateway</a>
+    <a href="the-story.html">The Story</a>
+    <a href="dark-times.html">Dark Times</a>
+    <a href="the-other-side.html">The Other Side</a>
+    <a href="the-river.html">The River</a>
+    <a href="the-archive.html">Archive</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="page-intro river-hero-bg">
+    <div class="parallax-text" style="bottom:-60px;left:50%;transform:translateX(-50%);opacity:0.25">FLOW</div>
+    <div class="scanlines"></div>
+    <div class="section-inner">
+      <div class="section-label reveal">Chapter 04 / The River</div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(3rem,8vw,6rem);font-weight:900;line-height:0.95;color:var(--text-bright)" class="reveal">
+        Let It <span class="neon-cyan glitch" data-text="Flow">Flow</span>
+      </h1>
+      <p style="font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--text-dim);max-width:520px;line-height:1.8;margin-top:16px" class="reveal">
+        Things don't need to be resolved to be beautiful. Notes, images, sounds — collected not curated. A river doesn't explain itself.
+      </p>
+    </div>
+  </div>
+
+  <!-- POEM SECTION -->
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-label reveal">Written / Fragment 001</div>
+      <div class="poem-block reveal" style="max-width:640px">
+        <span class="poem-line">There is a version of you</span>
+        <span class="poem-line indent">that exists only in certain songs —</span>
+        <span class="poem-line accent-line">more honest, more open,</span>
+        <span class="poem-line indent">briefly unafraid.</span>
+        <br>
+        <span class="poem-line">You go there when the lights are low</span>
+        <span class="poem-line indent">and nobody needs anything from you</span>
+        <span class="poem-line pink-line">and for a few minutes</span>
+        <span class="poem-line indent">you remember</span>
+        <span class="poem-line">exactly who you were trying to become.</span>
+        <br>
+        <div style="font-family:var(--font-mono);font-size:0.58rem;letter-spacing:0.2em;color:var(--text-dim);margin-top:16px">— Written at 2:47AM / Somewhere</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY FLOW -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner">
+      <div class="section-label reveal">Gallery / Fragments</div>
+      <h2 class="section-title reveal">Moments <span class="accent">Collected</span></h2>
+
+      <div class="river-flow reveal">
+        <!-- Column 1 -->
+        <div class="river-col">
+          <div class="river-polaroid" style="transform:rotate(-1.2deg)">
+            <img src="assets/gallery/i3.jpg" alt="fragment" class="river-polaroid-img"
+                 onerror="this.style.display='none';this.parentElement.style.background='var(--bg3)';this.parentElement.insertAdjacentHTML('afterbegin','<div style=\'aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:3rem\'>🌃</div>')">
+            <div class="river-polaroid-caption">The city never sleeps. Neither did you that night.</div>
+          </div>
+
+          <div class="river-note">
+            <div class="river-note-text">"You have this thing where you feel every season deeply. Not just autumn — every single one. Like seasons are people and you're saying goodbye to each of them."</div>
+            <div class="river-note-meta">Note — undated</div>
+          </div>
+
+          <div class="river-polaroid" style="transform:rotate(0.8deg)">
+            <img src="assets/gallery/f1.jpg" alt="fragment" class="river-polaroid-img"
+                 onerror="this.style.display='none';this.parentElement.style.background='var(--bg3)';this.parentElement.insertAdjacentHTML('afterbegin','<div style=\'aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:3rem\'>🌊</div>')">
+            <div class="river-polaroid-caption">Water has always made sense when nothing else did.</div>
+          </div>
+        </div>
+
+        <!-- Column 2 -->
+        <div class="river-col" style="margin-top:40px">
+          <div class="river-note">
+            <div class="river-note-text">"I keep listening to the same song because I'm not done being inside the feeling it gave me the first time."</div>
+            <div class="river-note-meta">Note — 3:12AM</div>
+          </div>
+
+          <div class="river-polaroid" style="transform:rotate(1.5deg)">
+            <div style="aspect-ratio:4/3;background:linear-gradient(135deg,var(--bg2),var(--bg3));display:flex;align-items:center;justify-content:center;font-size:4rem">🌌</div>
+            <div class="river-polaroid-caption">The sky does this thing sometimes. You should see it.</div>
+          </div>
+
+          <div class="river-note">
+            <div class="river-note-text">"There are cities I've never been to that already feel like home. I wonder if I'm homesick for a life I haven't lived yet."</div>
+            <div class="river-note-meta">Written on a train — city unknown</div>
+          </div>
+
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:24px;position:relative;overflow:hidden">
+            <div style="font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.3em;color:var(--purple);margin-bottom:12px;text-transform:uppercase">Currently on repeat</div>
+            <div style="font-family:var(--font-display);font-size:1.1rem;color:var(--text-bright);margin-bottom:4px">The Night We Met</div>
+            <div style="font-size:0.85rem;color:var(--text-dim);margin-bottom:16px">Lord Huron</div>
+            <div class="waveform">
+              <div class="waveform-bar"></div>
+              <div class="waveform-bar"></div>
+              <div class="waveform-bar"></div>
+              <div class="waveform-bar"></div>
+              <div class="waveform-bar"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 3 -->
+        <div class="river-col" style="margin-top:20px">
+          <div class="river-polaroid" style="transform:rotate(-0.7deg)">
+            <div style="aspect-ratio:4/3;background:linear-gradient(160deg,#0a0d1a,#1a0a2e);display:flex;align-items:center;justify-content:center;font-size:4rem">🏙</div>
+            <div class="river-polaroid-caption">Urban nights. The noise that becomes familiar enough to be silence.</div>
+          </div>
+
+          <div class="poem-block" style="padding:24px 28px">
+            <span class="poem-line" style="font-size:0.95rem">Some mornings</span>
+            <span class="poem-line indent" style="font-size:0.95rem">feel like you survived</span>
+            <span class="poem-line accent-line" style="font-size:0.95rem">something unnamed</span>
+            <span class="poem-line indent" style="font-size:0.95rem">and emerged</span>
+            <span class="poem-line" style="font-size:0.95rem">lighter.</span>
+          </div>
+
+          <div class="river-polaroid" style="transform:rotate(-1deg)">
+            <img src="assets/gallery/i3.jpg" alt="fragment" class="river-polaroid-img"
+                 onerror="this.style.display='none';this.parentElement.style.background='var(--bg3)';this.parentElement.insertAdjacentHTML('afterbegin','<div style=\'aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:3rem\'>🌆</div>')">
+            <div class="river-polaroid-caption">Some cities only reveal themselves after midnight.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HORIZONTAL SCROLL MOMENTS -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner">
+      <div class="section-label reveal">Scroll / Moments In Time</div>
+      <h2 class="section-title reveal">Passing <span class="accent-pink">Frames</span></h2>
+
+      <div class="h-scroll-strip reveal">
+        <div class="h-scroll-item">
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,#0a0d1a,#1e0a3c);display:flex;align-items:center;justify-content:center;font-size:3rem">🎵</div>
+          <div class="h-scroll-item-label">The song that plays in the scene of your life you'd put in a film.</div>
+        </div>
+        <div class="h-scroll-item">
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,#0a1a12,#001a10);display:flex;align-items:center;justify-content:center;font-size:3rem">🌧</div>
+          <div class="h-scroll-item-label">Rain on a window while something important was ending.</div>
+        </div>
+        <div class="h-scroll-item">
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,#1a0a10,#2e0a1e);display:flex;align-items:center;justify-content:center;font-size:3rem">🕯</div>
+          <div class="h-scroll-item-label">The specific warmth of a good room on a cold night.</div>
+        </div>
+        <div class="h-scroll-item">
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,#0a0d1a,#0a1a2e);display:flex;align-items:center;justify-content:center;font-size:3rem">🚂</div>
+          <div class="h-scroll-item-label">Moving through places you'll never fully know.</div>
+        </div>
+        <div class="h-scroll-item">
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,#1a0a0a,#2e1a0a);display:flex;align-items:center;justify-content:center;font-size:3rem">☕</div>
+          <div class="h-scroll-item-label">Coffee getting cold while you got lost in thought.</div>
+        </div>
+        <div class="h-scroll-item">
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,#0d0a1a,#1a0d2e);display:flex;align-items:center;justify-content:center;font-size:3rem">📖</div>
+          <div class="h-scroll-item-label">A sentence that rewired something permanently.</div>
+        </div>
+        <div class="h-scroll-item">
+          <div style="aspect-ratio:1;background:linear-gradient(135deg,#0a1a1a,#002e2e);display:flex;align-items:center;justify-content:center;font-size:3rem">🌅</div>
+          <div class="h-scroll-item-label">The sunrise you didn't expect to need so much.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLAYLIST / SOUNDTRACK -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner">
+      <div class="section-label reveal">Playlist / The River Soundtrack</div>
+      <h2 class="section-title reveal">Songs That <span class="accent">Understood</span></h2>
+
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden" class="reveal">
+        <div style="padding:20px 20px 0;border-bottom:1px solid var(--border)">
+          <div style="font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.2em;color:var(--text-dim);text-transform:uppercase;margin-bottom:16px">Curated / Lifetime Rotation</div>
+        </div>
+
+        <div class="track-row">
+          <div class="track-num">01</div>
+          <div class="track-mood">🌙</div>
+          <div class="track-info">
+            <div class="track-name">The Night We Met</div>
+            <div class="track-artist">Lord Huron</div>
+          </div>
+          <div class="track-time">3:28</div>
+        </div>
+        <div class="track-row">
+          <div class="track-num">02</div>
+          <div class="track-mood">🌹</div>
+          <div class="track-info">
+            <div class="track-name">Apocalypse</div>
+            <div class="track-artist">Cigarettes After Sex</div>
+          </div>
+          <div class="track-time">4:59</div>
+        </div>
+        <div class="track-row">
+          <div class="track-num">03</div>
+          <div class="track-mood">🖤</div>
+          <div class="track-info">
+            <div class="track-name">When the Party's Over</div>
+            <div class="track-artist">Billie Eilish</div>
+          </div>
+          <div class="track-time">3:16</div>
+        </div>
+        <div class="track-row">
+          <div class="track-num">04</div>
+          <div class="track-mood">🌊</div>
+          <div class="track-info">
+            <div class="track-name">Falling</div>
+            <div class="track-artist">Harry Styles</div>
+          </div>
+          <div class="track-time">4:00</div>
+        </div>
+        <div class="track-row">
+          <div class="track-num">05</div>
+          <div class="track-mood">🎸</div>
+          <div class="track-info">
+            <div class="track-name">Motion Sickness</div>
+            <div class="track-artist">Phoebe Bridgers</div>
+          </div>
+          <div class="track-time">3:34</div>
+        </div>
+        <div class="track-row">
+          <div class="track-num">06</div>
+          <div class="track-mood">💜</div>
+          <div class="track-info">
+            <div class="track-name">Skinny Love</div>
+            <div class="track-artist">Bon Iver</div>
+          </div>
+          <div class="track-time">3:58</div>
+        </div>
+        <div class="track-row">
+          <div class="track-num">07</div>
+          <div class="track-mood">🌫</div>
+          <div class="track-info">
+            <div class="track-name">K.</div>
+            <div class="track-artist">Cigarettes After Sex</div>
+          </div>
+          <div class="track-time">3:50</div>
+        </div>
+        <div class="track-row">
+          <div class="track-num">08</div>
+          <div class="track-mood">⚡</div>
+          <div class="track-info">
+            <div class="track-name">COPYCAT</div>
+            <div class="track-artist">Billie Eilish</div>
+          </div>
+          <div class="track-time">3:47</div>
+        </div>
+        <div class="track-row">
+          <div class="track-num">09</div>
+          <div class="track-mood">🌃</div>
+          <div class="track-info">
+            <div class="track-name">Someone Great</div>
+            <div class="track-artist">LCD Soundsystem</div>
+          </div>
+          <div class="track-time">7:18</div>
+        </div>
+        <div class="track-row">
+          <div class="track-num">10</div>
+          <div class="track-mood">🕊</div>
+          <div class="track-info">
+            <div class="track-name">Death With Dignity</div>
+            <div class="track-artist">Sufjan Stevens</div>
+          </div>
+          <div class="track-time">3:51</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;text-align:right">
+        <a href="the-archive.html" class="btn btn-ghost" style="font-size:0.65rem">Full Lifetime Stats in Archive →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING POEM -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner">
+      <hr class="hr-glow" style="margin-bottom:80px">
+
+      <div style="max-width:580px;margin:0 auto;text-align:center" class="reveal">
+        <div style="font-family:var(--font-mono);font-size:0.55rem;letter-spacing:0.4em;color:var(--text-dim);text-transform:uppercase;margin-bottom:24px">Fragment 002 / Closing</div>
+        <div style="font-family:var(--font-serif);font-size:1.2rem;color:var(--text-dim);line-height:2;font-style:italic">
+          The river doesn't ask<br>
+          where it's going.<br>
+          <span style="color:var(--cyan)">It just goes.</span><br>
+          <br>
+          Maybe that's<br>
+          the whole lesson.
+        </div>
+        <div style="margin-top:48px;display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+          <a href="the-archive.html" class="btn btn-primary">The Archive →</a>
+          <a href="the-other-side.html" class="btn btn-ghost">← The Other Side</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">L4B3D</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="the-story.html">Story</a>
+      <a href="dark-times.html">Dark Times</a>
+      <a href="the-other-side.html">Other Side</a>
+      <a href="the-archive.html">Archive</a>
+    </div>
+    <div class="footer-copy">Built for the ones between frequencies · Not for everyone · Only for you</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

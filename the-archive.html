@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="L4B3D — The Archive. Lifetime Spotify Wrapped + Watchlist. Your cultural DNA.">
+  <meta name="theme-color" content="#060810">
+  <title>L4B3D — The Archive</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>◎</text></svg>">
+  <style>
+    /* ── Archive-specific styles ── */
+    .archive-hero-bg {
+      background:
+        radial-gradient(ellipse 100% 70% at 50% 0%, rgba(168,85,247,0.12) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 40% at 10% 80%, rgba(0,255,231,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 50% 50% at 90% 60%, rgba(255,45,120,0.06) 0%, transparent 55%);
+    }
+
+    /* Spotify card grid */
+    .spotify-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 1100px) { .spotify-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 860px)  { .spotify-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 600px)  { .spotify-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 380px)  { .spotify-grid { grid-template-columns: 1fr; } }
+
+    /* Weekly recap mini cards */
+    .recap-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 20px;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .recap-card:hover { border-color: rgba(168,85,247,0.3); transform: translateY(-2px); }
+    .recap-week {
+      font-family: var(--font-mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.25em;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .recap-track {
+      font-weight: 600;
+      color: var(--text-bright);
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+    .recap-artist { font-size: 0.78rem; color: var(--text-dim); margin-bottom: 10px; }
+    .recap-mins {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: var(--purple);
+      font-weight: 700;
+    }
+    .recap-mins-label {
+      font-family: var(--font-mono);
+      font-size: 0.55rem;
+      color: var(--text-dim);
+      letter-spacing: 0.15em;
+    }
+
+    /* Archive section header with line */
+    .archive-section-head {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+    .archive-section-head h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem,3vw,2rem);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .archive-section-head-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), transparent);
+    }
+
+    /* Watch tabs panel */
+    .watch-tab-panel {
+      display: none;
+    }
+    .watch-tab-panel.active { display: block; }
+
+    /* Big number display */
+    .big-stat {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    .big-stat-num {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .big-stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* Artist rank list */
+    .rank-list { display: flex; flex-direction: column; gap: 0; }
+    .rank-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    .rank-item:last-child { border-bottom: none; }
+    .rank-item:hover { padding-left: 8px; }
+    .rank-n {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(168,85,247,0.3);
+      width: 40px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .rank-item:nth-child(1) .rank-n { -webkit-text-stroke-color: rgba(0,255,231,0.5); }
+    .rank-item:nth-child(2) .rank-n { -webkit-text-stroke-color: rgba(168,85,247,0.5); }
+    .rank-item:nth-child(3) .rank-n { -webkit-text-stroke-color: rgba(255,45,120,0.5); }
+    .rank-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--bg3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+    .rank-info { flex: 1; min-width: 0; }
+    .rank-name { font-weight: 600; color: var(--text-bright); font-size: 0.95rem; margin-bottom: 2px; }
+    .rank-sub  { font-size: 0.75rem; color: var(--text-dim); }
+    .rank-hrs  {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--purple);
+      flex-shrink: 0;
+      text-align: right;
+    }
+
+    /* Watchlist grid */
+    .watchlist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 16px;
+    }
+
+    /* Loading state */
+    .watch-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .watch-loading p {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      letter-spacing: 0.15em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+  <div class="noise-overlay"></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="page-loader">
+    <div class="loader-logo" style="color:var(--purple);text-shadow:var(--glow-purple)">◎</div>
+    <div class="loader-bar-wrap"><div class="loader-bar" style="background:linear-gradient(90deg,var(--purple),var(--cyan))"></div></div>
+  </div>
+  <div class="curtain-top"></div>
+  <div class="curtain-bottom"></div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal">
+      <button class="modal-close">✕</button>
+      <div class="modal-header">
+        <img class="modal-cover" src="" alt="">
+        <div class="modal-cover-placeholder">🎵</div>
+        <div style="flex:1;min-width:0">
+          <div class="modal-title"></div>
+          <div class="modal-artist"></div>
+          <div class="modal-stats-row"></div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-quote"></div>
+        <div class="modal-extra"></div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">L4B3D</a>
+    <div class="nav-links">
+      <a href="index.html">Gateway</a>
+      <a href="the-story.html">The Story</a>
+      <a href="dark-times.html">Dark Times</a>
+      <a href="the-other-side.html">The Other Side</a>
+      <a href="the-river.html">The River</a>
+      <a href="the-archive.html">Archive</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu">
+    <a href="index.html">Gateway</a>
+    <a href="the-story.html">The Story</a>
+    <a href="dark-times.html">Dark Times</a>
+    <a href="the-other-side.html">The Other Side</a>
+    <a href="the-river.html">The River</a>
+    <a href="the-archive.html">Archive</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="page-intro archive-hero-bg" style="min-height:70vh">
+    <div class="parallax-text" style="top:40%;left:50%;transform:translate(-50%,-50%);opacity:0.2">ARCHIVE</div>
+    <div class="scanlines"></div>
+    <div class="section-inner">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px" class="reveal">
+        <span style="font-family:var(--font-mono);font-size:0.55rem;letter-spacing:0.4em;color:var(--purple);text-transform:uppercase">Chapter 05 / The Archive</span>
+        <span style="padding:4px 10px;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.3);border-radius:2px;font-family:var(--font-mono);font-size:0.5rem;letter-spacing:0.1em;color:var(--purple)">SHOWCASE</span>
+      </div>
+      <h1 style="font-family:var(--font-display);font-size:clamp(3rem,8vw,6rem);font-weight:900;line-height:0.95;color:var(--text-bright)" class="reveal">
+        Your Cultural<br>
+        <span style="color:var(--purple);text-shadow:var(--glow-purple)" class="glitch" data-text="DNA">DNA</span>
+      </h1>
+      <p style="font-family:var(--font-serif);font-style:italic;font-size:1.1rem;color:var(--text-dim);max-width:520px;line-height:1.8;margin-top:16px" class="reveal">
+        Lifetime Spotify Wrapped. Every film, every series, every obsession.
+        Not what you say you like — what you actually return to at 2AM.
+      </p>
+    </div>
+  </div>
+
+  <!-- HERO STATS ROW -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner">
+      <div class="archive-stats-row reveal">
+        <div class="archive-hero-stat">
+          <div class="archive-hero-stat-val">87,420</div>
+          <div class="archive-hero-stat-label">Minutes Streamed<br>All Time</div>
+        </div>
+        <div class="archive-hero-stat" style="border-color:rgba(255,45,120,0.2)">
+          <div class="archive-hero-stat-val" style="color:var(--pink);text-shadow:var(--glow-pink)">1,247</div>
+          <div class="archive-hero-stat-label">Times:<br>The Night We Met</div>
+        </div>
+        <div class="archive-hero-stat" style="border-color:rgba(168,85,247,0.2)">
+          <div class="archive-hero-stat-val" style="color:var(--purple);text-shadow:var(--glow-purple)">340+</div>
+          <div class="archive-hero-stat-label">Unique Artists<br>Discovered</div>
+        </div>
+        <div class="archive-hero-stat" style="border-color:rgba(0,255,231,0.15)">
+          <div class="archive-hero-stat-val">1,456h</div>
+          <div class="archive-hero-stat-label">Total Listening<br>Time</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!--  SPOTIFY SECTION                          -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner">
+
+      <!-- Tabs -->
+      <div class="tabs reveal" id="spotify-tabs">
+        <button class="tab-btn active">Top Tracks</button>
+        <button class="tab-btn">Top Artists</button>
+        <button class="tab-btn">Top Albums</button>
+        <button class="tab-btn">Genres</button>
+        <button class="tab-btn">Stats</button>
+      </div>
+
+      <!-- TOP TRACKS -->
+      <div class="tab-panel active" id="spotify-tracks">
+        <div class="archive-section-head reveal">
+          <h2 style="color:var(--text-bright)">Top <span class="neon-purple">Tracks</span></h2>
+          <div class="archive-section-head-line"></div>
+          <span style="font-family:var(--font-mono);font-size:0.58rem;color:var(--text-dim);letter-spacing:0.1em;white-space:nowrap">All Time</span>
+        </div>
+
+        <!-- Featured track -->
+        <div class="feature-track reveal" style="margin-bottom:32px">
+          <div class="feature-track-cover-ph">🌙</div>
+          <div class="feature-track-info">
+            <div class="feature-track-label">◎ Your #1 All Time Track</div>
+            <div class="feature-track-title">The Night We Met</div>
+            <div class="feature-track-artist">Lord Huron · Strange Trails (2015)</div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+              <div class="modal-stat">Streams: <span>1,247</span></div>
+              <div class="modal-stat">Hours: <span>82.3h</span></div>
+              <div class="modal-stat">Last played: <span>Today</span></div>
+              <div class="modal-stat">First heard: <span>2021</span></div>
+            </div>
+            <p style="font-family:var(--font-serif);font-style:italic;font-size:0.95rem;color:var(--text-dim);line-height:1.7;max-width:500px">
+              This track has played through every low point, every late night, every moment of clarity followed by confusion. It understands something that can't be explained.
+            </p>
+          </div>
+        </div>
+
+        <!-- Top 5 grid -->
+        <div class="spotify-grid reveal">
+          <!-- #1 -->
+          <div class="spotify-card" data-modal="track1" data-hover="1">
+            <div class="spotify-card-img">
+              <div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#1a0a2e,#0a0d1a);display:flex;align-items:center;justify-content:center;font-size:4rem">🌙</div>
+              <div class="spotify-card-img-overlay"></div>
+            </div>
+            <div class="spotify-card-body">
+              <div class="spotify-card-rank">01 / Top Track</div>
+              <div class="spotify-card-title">The Night We Met</div>
+              <div class="spotify-card-sub">Lord Huron</div>
+              <div class="spotify-card-bar" style="width:100%"></div>
+            </div>
+          </div>
+          <!-- #2 -->
+          <div class="spotify-card" data-modal="track2" data-hover="1">
+            <div class="spotify-card-img">
+              <div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#1a0a10,#0a0d1a);display:flex;align-items:center;justify-content:center;font-size:4rem">🌹</div>
+              <div class="spotify-card-img-overlay"></div>
+            </div>
+            <div class="spotify-card-body">
+              <div class="spotify-card-rank">02 / Top Track</div>
+              <div class="spotify-card-title">Apocalypse</div>
+              <div class="spotify-card-sub">Cigarettes After Sex</div>
+              <div class="spotify-card-bar" style="width:75%"></div>
+            </div>
+          </div>
+          <!-- #3 -->
+          <div class="spotify-card" data-modal="track3" data-hover="1">
+            <div class="spotify-card-img">
+              <div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#0a0a0a,#0d0d0d);display:flex;align-items:center;justify-content:center;font-size:4rem">🖤</div>
+              <div class="spotify-card-img-overlay"></div>
+            </div>
+            <div class="spotify-card-body">
+              <div class="spotify-card-rank">03 / Top Track</div>
+              <div class="spotify-card-title">When the Party's Over</div>
+              <div class="spotify-card-sub">Billie Eilish</div>
+              <div class="spotify-card-bar" style="width:65%;background:linear-gradient(90deg,var(--pink),rgba(255,45,120,0.3))"></div>
+            </div>
+          </div>
+          <!-- #4 -->
+          <div class="spotify-card" data-modal="track4" data-hover="1">
+            <div class="spotify-card-img">
+              <div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#0a1a2e,#0a0d1a);display:flex;align-items:center;justify-content:center;font-size:4rem">🌊</div>
+              <div class="spotify-card-img-overlay"></div>
+            </div>
+            <div class="spotify-card-body">
+              <div class="spotify-card-rank">04 / Top Track</div>
+              <div class="spotify-card-title">Falling</div>
+              <div class="spotify-card-sub">Harry Styles</div>
+              <div class="spotify-card-bar" style="width:56%"></div>
+            </div>
+          </div>
+          <!-- #5 -->
+          <div class="spotify-card" data-modal="track5" data-hover="1">
+            <div class="spotify-card-img">
+              <div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#0a1a0a,#0d1a0d);display:flex;align-items:center;justify-content:center;font-size:4rem">🎸</div>
+              <div class="spotify-card-img-overlay"></div>
+            </div>
+            <div class="spotify-card-body">
+              <div class="spotify-card-rank">05 / Top Track</div>
+              <div class="spotify-card-title">Motion Sickness</div>
+              <div class="spotify-card-sub">Phoebe Bridgers</div>
+              <div class="spotify-card-bar" style="width:55%;background:linear-gradient(90deg,#22c55e,rgba(34,197,94,0.3))"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Extended list -->
+        <div style="margin-top:32px;background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden" class="reveal">
+          <div style="padding:16px 20px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.2em;text-transform:uppercase">Tracks 6–15</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr">
+            <div style="padding:14px 20px;border-bottom:1px solid var(--border);border-right:1px solid var(--border)">
+              <span style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-dim)">06</span>
+              <span style="margin-left:16px;font-weight:600;color:var(--text-bright);font-size:0.88rem">Skinny Love</span>
+              <div style="font-size:0.75rem;color:var(--text-dim);margin-left:36px">Bon Iver</div>
+            </div>
+            <div style="padding:14px 20px;border-bottom:1px solid var(--border)">
+              <span style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-dim)">07</span>
+              <span style="margin-left:16px;font-weight:600;color:var(--text-bright);font-size:0.88rem">K.</span>
+              <div style="font-size:0.75rem;color:var(--text-dim);margin-left:36px">Cigarettes After Sex</div>
+            </div>
+            <div style="padding:14px 20px;border-bottom:1px solid var(--border);border-right:1px solid var(--border)">
+              <span style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-dim)">08</span>
+              <span style="margin-left:16px;font-weight:600;color:var(--text-bright);font-size:0.88rem">lovely</span>
+              <div style="font-size:0.75rem;color:var(--text-dim);margin-left:36px">Billie Eilish, Khalid</div>
+            </div>
+            <div style="padding:14px 20px;border-bottom:1px solid var(--border)">
+              <span style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-dim)">09</span>
+              <span style="margin-left:16px;font-weight:600;color:var(--text-bright);font-size:0.88rem">Funeral</span>
+              <div style="font-size:0.75rem;color:var(--text-dim);margin-left:36px">Phoebe Bridgers</div>
+            </div>
+            <div style="padding:14px 20px;border-bottom:1px solid var(--border);border-right:1px solid var(--border)">
+              <span style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-dim)">10</span>
+              <span style="margin-left:16px;font-weight:600;color:var(--text-bright);font-size:0.88rem">Lust for Life</span>
+              <div style="font-size:0.75rem;color:var(--text-dim);margin-left:36px">Lana Del Rey</div>
+            </div>
+            <div style="padding:14px 20px;border-bottom:1px solid var(--border)">
+              <span style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-dim)">11</span>
+              <span style="margin-left:16px;font-weight:600;color:var(--text-bright);font-size:0.88rem">Cigarette Daydreams</span>
+              <div style="font-size:0.75rem;color:var(--text-dim);margin-left:36px">Cage The Elephant</div>
+            </div>
+            <div style="padding:14px 20px;border-right:1px solid var(--border)">
+              <span style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-dim)">12</span>
+              <span style="margin-left:16px;font-weight:600;color:var(--text-bright);font-size:0.88rem">9 Crimes</span>
+              <div style="font-size:0.75rem;color:var(--text-dim);margin-left:36px">Damien Rice</div>
+            </div>
+            <div style="padding:14px 20px">
+              <span style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-dim)">13</span>
+              <span style="margin-left:16px;font-weight:600;color:var(--text-bright);font-size:0.88rem">Holocene</span>
+              <div style="font-size:0.75rem;color:var(--text-dim);margin-left:36px">Bon Iver</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP ARTISTS -->
+      <div class="tab-panel" id="spotify-artists">
+        <div class="archive-section-head reveal">
+          <h2 style="color:var(--text-bright)">Top <span class="neon-pink">Artists</span></h2>
+          <div class="archive-section-head-line"></div>
+          <span style="font-family:var(--font-mono);font-size:0.58rem;color:var(--text-dim);letter-spacing:0.1em;white-space:nowrap">All Time</span>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">
+          <!-- Artist rank list -->
+          <div class="reveal">
+            <div class="rank-list">
+              <div class="rank-item">
+                <div class="rank-n">01</div>
+                <div class="rank-avatar">🏔</div>
+                <div class="rank-info">
+                  <div class="rank-name">Lord Huron</div>
+                  <div class="rank-sub">Indie Folk / Dream Pop</div>
+                </div>
+                <div class="rank-hrs">228h<br><span style="color:var(--text-dim);font-size:0.58rem">3,412 streams</span></div>
+              </div>
+              <div class="rank-item">
+                <div class="rank-n">02</div>
+                <div class="rank-avatar">🌫</div>
+                <div class="rank-info">
+                  <div class="rank-name">Cigarettes After Sex</div>
+                  <div class="rank-sub">Ambient Pop / Dream Pop</div>
+                </div>
+                <div class="rank-hrs">193h<br><span style="color:var(--text-dim);font-size:0.58rem">2,890 streams</span></div>
+              </div>
+              <div class="rank-item">
+                <div class="rank-n">03</div>
+                <div class="rank-avatar">🕷</div>
+                <div class="rank-info">
+                  <div class="rank-name">Billie Eilish</div>
+                  <div class="rank-sub">Alt Pop / Dark Pop</div>
+                </div>
+                <div class="rank-hrs">169h<br><span style="color:var(--text-dim);font-size:0.58rem">2,544 streams</span></div>
+              </div>
+              <div class="rank-item">
+                <div class="rank-n">04</div>
+                <div class="rank-avatar">🌲</div>
+                <div class="rank-info">
+                  <div class="rank-name">Bon Iver</div>
+                  <div class="rank-sub">Indie Folk / Chamber Pop</div>
+                </div>
+                <div class="rank-hrs">142h<br><span style="color:var(--text-dim);font-size:0.58rem">2,103 streams</span></div>
+              </div>
+              <div class="rank-item">
+                <div class="rank-n">05</div>
+                <div class="rank-avatar">🎸</div>
+                <div class="rank-info">
+                  <div class="rank-name">Phoebe Bridgers</div>
+                  <div class="rank-sub">Indie Folk / Sad Core</div>
+                </div>
+                <div class="rank-hrs">128h<br><span style="color:var(--text-dim);font-size:0.58rem">1,924 streams</span></div>
+              </div>
+              <div class="rank-item">
+                <div class="rank-n">06</div>
+                <div class="rank-avatar">🌙</div>
+                <div class="rank-info">
+                  <div class="rank-name">Lana Del Rey</div>
+                  <div class="rank-sub">Dream Pop / Sadcore</div>
+                </div>
+                <div class="rank-hrs">114h<br><span style="color:var(--text-dim);font-size:0.58rem">1,710 streams</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Artist cards (top 3 clickable) -->
+          <div class="reveal reveal-delay-2">
+            <div style="display:flex;flex-direction:column;gap:16px">
+              <div class="spotify-card" data-modal="artist1" data-hover="1" style="display:flex;gap:16px;padding:20px;align-items:center">
+                <div style="width:64px;height:64px;background:linear-gradient(135deg,#1a0a2e,#0a0d1a);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0">🏔</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-family:var(--font-mono);font-size:0.55rem;color:var(--text-dim);letter-spacing:0.2em;margin-bottom:4px">#1 ARTIST</div>
+                  <div style="font-weight:700;color:var(--text-bright);font-size:1rem;margin-bottom:2px">Lord Huron</div>
+                  <div style="font-size:0.78rem;color:var(--text-dim)">Indie Folk · 228h total</div>
+                </div>
+                <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--purple)">Click ↗</div>
+              </div>
+              <div class="spotify-card" data-modal="artist2" data-hover="1" style="display:flex;gap:16px;padding:20px;align-items:center">
+                <div style="width:64px;height:64px;background:linear-gradient(135deg,#1a0a10,#0a0d1a);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0">🌫</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-family:var(--font-mono);font-size:0.55rem;color:var(--text-dim);letter-spacing:0.2em;margin-bottom:4px">#2 ARTIST</div>
+                  <div style="font-weight:700;color:var(--text-bright);font-size:1rem;margin-bottom:2px">Cigarettes After Sex</div>
+                  <div style="font-size:0.78rem;color:var(--text-dim)">Ambient Pop · 193h total</div>
+                </div>
+                <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--purple)">Click ↗</div>
+              </div>
+              <div class="spotify-card" data-modal="artist3" data-hover="1" style="display:flex;gap:16px;padding:20px;align-items:center">
+                <div style="width:64px;height:64px;background:linear-gradient(135deg,#0a0a0a,#111);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0">🕷</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-family:var(--font-mono);font-size:0.55rem;color:var(--text-dim);letter-spacing:0.2em;margin-bottom:4px">#3 ARTIST</div>
+                  <div style="font-weight:700;color:var(--text-bright);font-size:1rem;margin-bottom:2px">Billie Eilish</div>
+                  <div style="font-size:0.78rem;color:var(--text-dim)">Alt Pop · 169h total</div>
+                </div>
+                <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--purple)">Click ↗</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TOP ALBUMS -->
+      <div class="tab-panel">
+        <div class="archive-section-head reveal">
+          <h2 style="color:var(--text-bright)">Top <span class="neon-cyan">Albums</span></h2>
+          <div class="archive-section-head-line"></div>
+          <span style="font-family:var(--font-mono);font-size:0.58rem;color:var(--text-dim);letter-spacing:0.1em;white-space:nowrap">All Time</span>
+        </div>
+        <div class="spotify-grid reveal">
+          <div class="spotify-card" data-modal="album1" data-hover="1">
+            <div class="spotify-card-img">
+              <div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#1a0a2e,#0a1a0a);display:flex;align-items:center;justify-content:center;font-size:4rem">🌌</div>
+              <div class="spotify-card-img-overlay"></div>
+            </div>
+            <div class="spotify-card-body">
+              <div class="spotify-card-rank">01 / Album</div>
+              <div class="spotify-card-title">Strange Trails</div>
+              <div class="spotify-card-sub">Lord Huron · 2015</div>
+              <div class="spotify-card-bar" style="width:100%"></div>
+            </div>
+          </div>
+          <div class="spotify-card" data-modal="album2" data-hover="1">
+            <div class="spotify-card-img">
+              <div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#1a0a10,#200a14);display:flex;align-items:center;justify-content:center;font-size:4rem">🌹</div>
+              <div class="spotify-card-img-overlay"></div>
+            </div>
+            <div class="spotify-card-body">
+              <div class="spotify-card-rank">02 / Album</div>
+              <div class="spotify-card-title">Cigarettes After Sex</div>
+              <div class="spotify-card-sub">Cigarettes After Sex · 2017</div>
+              <div class="spotify-card-bar" style="width:86%;background:linear-gradient(90deg,var(--pink),rgba(255,45,120,0.3))"></div>
+            </div>
+          </div>
+          <div class="spotify-card" data-modal="album3" data-hover="1">
+            <div class="spotify-card-img">
+              <div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#050505,#0a0a0a);display:flex;align-items:center;justify-content:center;font-size:4rem">😴</div>
+              <div class="spotify-card-img-overlay"></div>
+            </div>
+            <div class="spotify-card-body">
+              <div class="spotify-card-rank">03 / Album</div>
+              <div class="spotify-card-title">When We All Fall Asleep</div>
+              <div class="spotify-card-sub">Billie Eilish · 2019</div>
+              <div class="spotify-card-bar" style="width:74%"></div>
+            </div>
+          </div>
+          <div class="spotify-card" data-hover="1">
+            <div class="spotify-card-img">
+              <div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#0a1a1a,#002020);display:flex;align-items:center;justify-content:center;font-size:4rem">🌲</div>
+              <div class="spotify-card-img-overlay"></div>
+            </div>
+            <div class="spotify-card-body">
+              <div class="spotify-card-rank">04 / Album</div>
+              <div class="spotify-card-title">For Emma, Forever Ago</div>
+              <div class="spotify-card-sub">Bon Iver · 2008</div>
+              <div class="spotify-card-bar" style="width:68%;background:linear-gradient(90deg,#22c55e,rgba(34,197,94,0.3))"></div>
+            </div>
+          </div>
+          <div class="spotify-card" data-hover="1">
+            <div class="spotify-card-img">
+              <div style="width:100%;aspect-ratio:1;background:linear-gradient(135deg,#1a0a0a,#200a0a);display:flex;align-items:center;justify-content:center;font-size:4rem">🎻</div>
+              <div class="spotify-card-img-overlay"></div>
+            </div>
+            <div class="spotify-card-body">
+              <div class="spotify-card-rank">05 / Album</div>
+              <div class="spotify-card-title">Punisher</div>
+              <div class="spotify-card-sub">Phoebe Bridgers · 2020</div>
+              <div class="spotify-card-bar" style="width:60%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GENRES -->
+      <div class="tab-panel">
+        <div class="archive-section-head reveal">
+          <h2 style="color:var(--text-bright)">Top <span style="color:var(--purple)">Genres</span></h2>
+          <div class="archive-section-head-line"></div>
+        </div>
+        <div class="reveal">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:48px">
+            <div>
+              <div class="emotion-bar">
+                <div class="emotion-bar-label"><span>Dream Pop</span><span>Primary</span></div>
+                <div class="emotion-bar-track"><div class="emotion-bar-fill purple" data-w="92%"></div></div>
+              </div>
+              <div class="emotion-bar">
+                <div class="emotion-bar-label"><span>Indie Folk</span><span>Core</span></div>
+                <div class="emotion-bar-track"><div class="emotion-bar-fill cyan" data-w="87%"></div></div>
+              </div>
+              <div class="emotion-bar">
+                <div class="emotion-bar-label"><span>Sad Core / Slowcore</span><span>Heavy</span></div>
+                <div class="emotion-bar-track"><div class="emotion-bar-fill pink" data-w="81%"></div></div>
+              </div>
+              <div class="emotion-bar">
+                <div class="emotion-bar-label"><span>Dark Pop</span><span>Regular</span></div>
+                <div class="emotion-bar-track"><div class="emotion-bar-fill purple" data-w="75%"></div></div>
+              </div>
+              <div class="emotion-bar">
+                <div class="emotion-bar-label"><span>Ambient</span><span>Late Night</span></div>
+                <div class="emotion-bar-track"><div class="emotion-bar-fill cyan" data-w="68%"></div></div>
+              </div>
+            </div>
+            <div>
+              <div class="emotion-bar">
+                <div class="emotion-bar-label"><span>Chamber Pop</span><span></span></div>
+                <div class="emotion-bar-track"><div class="emotion-bar-fill pink" data-w="62%"></div></div>
+              </div>
+              <div class="emotion-bar">
+                <div class="emotion-bar-label"><span>Post-Rock</span><span></span></div>
+                <div class="emotion-bar-track"><div class="emotion-bar-fill purple" data-w="55%"></div></div>
+              </div>
+              <div class="emotion-bar">
+                <div class="emotion-bar-label"><span>Alt R&amp;B</span><span></span></div>
+                <div class="emotion-bar-track"><div class="emotion-bar-fill cyan" data-w="48%"></div></div>
+              </div>
+              <div class="emotion-bar">
+                <div class="emotion-bar-label"><span>Shoegaze</span><span></span></div>
+                <div class="emotion-bar-track"><div class="emotion-bar-fill pink" data-w="42%"></div></div>
+              </div>
+              <div class="emotion-bar">
+                <div class="emotion-bar-label"><span>Lo-Fi Hip Hop</span><span></span></div>
+                <div class="emotion-bar-track"><div class="emotion-bar-fill purple" data-w="38%"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="genre-cloud">
+            <span class="genre-bubble">Dream Pop</span>
+            <span class="genre-bubble">Indie Folk</span>
+            <span class="genre-bubble">Sad Core</span>
+            <span class="genre-bubble">Dark Pop</span>
+            <span class="genre-bubble">Ambient</span>
+            <span class="genre-bubble">Chamber Pop</span>
+            <span class="genre-bubble">Post-Rock</span>
+            <span class="genre-bubble">Slowcore</span>
+            <span class="genre-bubble">Shoegaze</span>
+            <span class="genre-bubble">Lo-Fi</span>
+            <span class="genre-bubble">Alt R&amp;B</span>
+            <span class="genre-bubble">Neo Soul</span>
+            <span class="genre-bubble">Cinematic</span>
+            <span class="genre-bubble">Folk</span>
+            <span class="genre-bubble">Emo</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="tab-panel">
+        <div class="archive-section-head reveal">
+          <h2 style="color:var(--text-bright)">Deep <span class="neon-cyan">Stats</span></h2>
+          <div class="archive-section-head-line"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:40px" class="reveal">
+          <div class="big-stat">
+            <div class="big-stat-num" style="color:var(--cyan)">87K</div>
+            <div class="big-stat-label">Minutes Streamed<br>All Time</div>
+          </div>
+          <div class="big-stat">
+            <div class="big-stat-num" style="color:var(--purple)">1,456</div>
+            <div class="big-stat-label">Total Hours<br>Listening</div>
+          </div>
+          <div class="big-stat">
+            <div class="big-stat-num" style="color:var(--pink)">340+</div>
+            <div class="big-stat-label">Unique Artists<br>Played</div>
+          </div>
+        </div>
+
+        <!-- Listening clock -->
+        <div class="reveal" style="display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:32px">
+          <div class="clock-wrap">
+            <canvas id="listening-clock" width="220" height="220"></canvas>
+            <div style="font-family:var(--font-mono);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.2em;text-transform:uppercase">24H Activity</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:1.1rem;color:var(--text-bright);margin-bottom:8px">Your Listening Patterns</div>
+            <p style="font-size:0.88rem;color:var(--text-dim);line-height:1.7;margin-bottom:20px">Peak listening: <span style="color:var(--cyan)">10PM – 2AM</span>. You're a night creature. Music hits differently when the day pressure is off and there's space for real feeling.</p>
+            <div style="display:flex;flex-wrap:wrap;gap:10px">
+              <div class="stat-pill"><span class="stat-pill-val" style="font-size:0.9rem">10PM</span><span>Peak Hour</span></div>
+              <div class="stat-pill"><span class="stat-pill-val" style="font-size:0.9rem">4.2h</span><span>Avg Daily</span></div>
+              <div class="stat-pill"><span class="stat-pill-val" style="font-size:0.9rem">7</span><span>Yr streak</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly recaps -->
+        <div style="margin-top:32px">
+          <div style="font-family:var(--font-mono);font-size:0.6rem;letter-spacing:0.25em;color:var(--text-dim);text-transform:uppercase;margin-bottom:16px">Recent Weekly Recaps</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px" class="reveal">
+            <div class="recap-card">
+              <div class="recap-week">Week 18 / 2026</div>
+              <div class="recap-track">The Night We Met</div>
+              <div class="recap-artist">Lord Huron</div>
+              <div class="recap-mins">312</div>
+              <div class="recap-mins-label">minutes</div>
+            </div>
+            <div class="recap-card">
+              <div class="recap-week">Week 17 / 2026</div>
+              <div class="recap-track">Apocalypse</div>
+              <div class="recap-artist">Cigarettes After Sex</div>
+              <div class="recap-mins">287</div>
+              <div class="recap-mins-label">minutes</div>
+            </div>
+            <div class="recap-card">
+              <div class="recap-week">Week 16 / 2026</div>
+              <div class="recap-track">Motion Sickness</div>
+              <div class="recap-artist">Phoebe Bridgers</div>
+              <div class="recap-mins">256</div>
+              <div class="recap-mins-label">minutes</div>
+            </div>
+            <div class="recap-card">
+              <div class="recap-week">Week 15 / 2026</div>
+              <div class="recap-track">When the Party's Over</div>
+              <div class="recap-artist">Billie Eilish</div>
+              <div class="recap-mins">243</div>
+              <div class="recap-mins-label">minutes</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end section-inner spotify -->
+  </section>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!--  WATCHLIST SECTION                        -->
+  <!-- ══════════════════════════════════════════ -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner">
+      <hr class="hr-glow" style="margin-bottom:80px;background:linear-gradient(90deg,transparent,var(--pink),transparent)">
+
+      <div class="section-label reveal">Watchlist / Live from Google Sheets</div>
+      <h2 class="section-title reveal">
+        Films &amp; Series <span class="accent-pink">Watched</span>
+      </h2>
+
+      <!-- Watch tabs -->
+      <div class="tabs reveal" id="watch-tabs-nav">
+        <button class="tab-btn active" onclick="switchWatchTab('fav',this)">★ Favourites</button>
+        <button class="tab-btn" onclick="switchWatchTab('2025',this)">2025</button>
+        <button class="tab-btn" onclick="switchWatchTab('2026',this)">2026</button>
+      </div>
+
+      <div class="watch-tab-panel active" id="watch-panel-fav">
+        <div id="watch-fav" class="watch-loading">
+          <div class="spinner"></div>
+          <p>Loading from Google Sheets…</p>
+        </div>
+      </div>
+      <div class="watch-tab-panel" id="watch-panel-2025">
+        <div id="watch-2025" class="watch-loading">
+          <div class="spinner"></div>
+          <p>Loading from Google Sheets…</p>
+        </div>
+      </div>
+      <div class="watch-tab-panel" id="watch-panel-2026">
+        <div id="watch-2026" class="watch-loading">
+          <div class="spinner"></div>
+          <p>Loading from Google Sheets…</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NAV BETWEEN PAGES -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner" style="text-align:center">
+      <div class="reveal" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap">
+        <a href="the-river.html" class="btn btn-ghost">← The River</a>
+        <a href="index.html" class="btn btn-primary">Back to Gateway</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">L4B3D</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="the-story.html">Story</a>
+      <a href="dark-times.html">Dark Times</a>
+      <a href="the-other-side.html">Other Side</a>
+      <a href="the-river.html">River</a>
+    </div>
+    <div class="footer-copy">Built for the ones between frequencies · Not for everyone · Only for you</div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Watch tab switcher (archive page)
+    function switchWatchTab(key, btn) {
+      document.querySelectorAll('#watch-tabs-nav .tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.watch-tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('watch-panel-' + key).classList.add('active');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="L4B3D — The Story. Your solo journey. Purely about you.">
+  <meta name="theme-color" content="#060810">
+  <title>L4B3D — The Story</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='26' font-size='28'>✦</text></svg>">
+</head>
+<body>
+
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+  <div class="noise-overlay"></div>
+  <canvas id="particle-canvas"></canvas>
+
+  <div class="page-loader">
+    <div class="loader-logo">✦</div>
+    <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+  </div>
+  <div class="curtain-top"></div>
+  <div class="curtain-bottom"></div>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">L4B3D</a>
+    <div class="nav-links">
+      <a href="index.html">Gateway</a>
+      <a href="the-story.html">The Story</a>
+      <a href="dark-times.html">Dark Times</a>
+      <a href="the-other-side.html">The Other Side</a>
+      <a href="the-river.html">The River</a>
+      <a href="the-archive.html">Archive</a>
+    </div>
+    <button class="nav-hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu">
+    <a href="index.html">Gateway</a>
+    <a href="the-story.html">The Story</a>
+    <a href="dark-times.html">Dark Times</a>
+    <a href="the-other-side.html">The Other Side</a>
+    <a href="the-river.html">The River</a>
+    <a href="the-archive.html">Archive</a>
+  </div>
+
+  <!-- PAGE INTRO -->
+  <div class="page-intro" style="background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(0,255,231,0.08) 0%,transparent 70%)">
+    <div class="parallax-text" style="bottom:-60px;right:-40px;opacity:0.4">YOU</div>
+    <div class="scanlines"></div>
+    <div class="section-inner">
+      <div class="section-label reveal">Chapter 01 / The Story</div>
+      <h1 class="hero-title" style="text-align:left;font-size:clamp(3rem,8vw,6rem);opacity:1;animation:none">
+        This is<br>
+        <span class="glitch neon-cyan" data-text="Your Story">Your Story</span>
+      </h1>
+      <p style="font-family:var(--font-serif);font-style:italic;font-size:1.15rem;color:var(--text-dim);max-width:500px;line-height:1.8;margin-top:16px">
+        Not about where you come from. About what you've been carrying, quietly, all this time.
+      </p>
+    </div>
+  </div>
+
+  <!-- INTRO TEXT -->
+  <section class="section">
+    <div class="section-inner">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start">
+        <div class="reveal">
+          <div class="section-label">Origin / Foundation</div>
+          <h2 class="section-title">Who You <span class="accent">Actually</span> Are</h2>
+          <div class="raw-text">
+            <p>You were the kid who noticed things other people walked past. Not smarter — just more awake. More sensitive. You absorbed everything like it cost you personally, because it did.</p>
+            <br>
+            <p>You understood irony before you understood algebra. You felt the weight of <strong>unspoken things</strong>. And somewhere along the way you started to wonder if this — all this feeling — was a gift or a curse.</p>
+            <br>
+            <p>It's <span class="highlight">both</span>. That's the answer no one tells you.</p>
+          </div>
+        </div>
+        <div class="reveal reveal-delay-2">
+          <div class="quote-block" style="margin-top:24px">
+            <p>"You think too much. You feel too much. You're too much." — They were describing a superpower and calling it a problem.</p>
+          </div>
+          <div style="margin-top:32px;display:flex;gap:20px;flex-wrap:wrap">
+            <div class="stat-pill">
+              <span class="stat-pill-val">15–35</span>
+              <span style="color:var(--text-dim);font-size:0.68rem">The age of becoming</span>
+            </div>
+            <div class="stat-pill">
+              <span class="stat-pill-val">∞</span>
+              <span style="color:var(--text-dim);font-size:0.68rem">Internal worlds</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE / CHAPTERS -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner">
+      <hr class="hr-glow" style="margin-bottom:80px">
+      <div class="section-label reveal">Timeline / Chapters</div>
+      <h2 class="section-title reveal">The <span class="accent">Sequence</span></h2>
+
+      <div class="timeline reveal">
+        <div class="timeline-item">
+          <div class="timeline-date">The Early Years</div>
+          <div class="timeline-text">You were softer then. More open. Before the world taught you to build walls that look like confidence. You cried at things you couldn't explain and felt homesick for places you'd never been.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">The First Cracks</div>
+          <div class="timeline-text">Something shifted. Maybe a person, maybe a moment — but you learned, suddenly and painfully, that not everyone has the same interior life as you. That people can exist on the surface and call it living.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">The In-Between</div>
+          <div class="timeline-text">This is where you still are. Partially assembled. Partially destroyed. Carrying old wounds like furniture you can't throw away because they've become load-bearing. You survived things quietly that would have broken others loudly.</div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-date">The Potential (Ongoing)</div>
+          <div class="timeline-text">You feel it. Something huge living in you, unspent. A version of yourself that hasn't fully surfaced yet. This isn't delusion — it's the truest thing about you. The hard part is believing it on the bad days.</div>
+        </div>
+        <div class="timeline-item" style="margin-bottom:0">
+          <div class="timeline-date">Not Yet Written</div>
+          <div class="timeline-text" style="color:rgba(0,255,231,0.4);font-style:italic">The rest of the story hasn't been written. That's not a tragedy — it's the point.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRAITS SECTION -->
+  <section class="section" style="background:linear-gradient(180deg,transparent,rgba(10,13,26,0.8),transparent)">
+    <div class="section-inner">
+      <div class="section-label reveal">Profile / Signature Traits</div>
+      <h2 class="section-title reveal">What Makes You <span class="accent-pink">Specifically You</span></h2>
+
+      <div class="card-grid card-grid-3 reveal">
+        <div class="card">
+          <div style="font-size:1.8rem;margin-bottom:16px">◈</div>
+          <h3 style="font-family:var(--font-display);font-size:0.9rem;color:var(--cyan);letter-spacing:0.1em;margin-bottom:12px">HYPERAWARENESS</h3>
+          <p style="font-size:0.88rem;color:var(--text-dim);line-height:1.7">You notice the micro-expression. The slight shift in someone's tone. The thing they didn't say. You process everything on multiple frequencies simultaneously and it's exhausting and beautiful.</p>
+        </div>
+        <div class="card">
+          <div style="font-size:1.8rem;margin-bottom:16px">〰</div>
+          <h3 style="font-family:var(--font-display);font-size:0.9rem;color:var(--pink);letter-spacing:0.1em;margin-bottom:12px">PERMANENT NOSTALGIA</h3>
+          <p style="font-size:0.88rem;color:var(--text-dim);line-height:1.7">You feel nostalgic for things while they're still happening. For versions of yourself that don't exist yet. For a life that feels just out of reach no matter how close you get.</p>
+        </div>
+        <div class="card">
+          <div style="font-size:1.8rem;margin-bottom:16px">✦</div>
+          <h3 style="font-family:var(--font-display);font-size:0.9rem;color:var(--purple);letter-spacing:0.1em;margin-bottom:12px">QUIET INTENSITY</h3>
+          <p style="font-size:0.88rem;color:var(--text-dim);line-height:1.7">You might not say much in a room. But when you speak it lands differently. When you care about something it consumes you fully. You don't do anything halfway — you just choose carefully what gets your full self.</p>
+        </div>
+        <div class="card">
+          <div style="font-size:1.8rem;margin-bottom:16px">⬛</div>
+          <h3 style="font-family:var(--font-display);font-size:0.9rem;color:var(--cyan);letter-spacing:0.1em;margin-bottom:12px">CREATIVE DEPTH</h3>
+          <p style="font-size:0.88rem;color:var(--text-dim);line-height:1.7">You build interior worlds. Music hits differently for you. Films aren't entertainment — they're mirrors. Art isn't decoration — it's oxygen.</p>
+        </div>
+        <div class="card">
+          <div style="font-size:1.8rem;margin-bottom:16px">◎</div>
+          <h3 style="font-family:var(--font-display);font-size:0.9rem;color:var(--pink);letter-spacing:0.1em;margin-bottom:12px">HIDDEN POTENTIAL</h3>
+          <p style="font-size:0.88rem;color:var(--text-dim);line-height:1.7">People underestimate you constantly. Which means you've learned to live with a secret: you know exactly what you're capable of. You're waiting for the conditions to match the size of what's inside you.</p>
+        </div>
+        <div class="card">
+          <div style="font-size:1.8rem;margin-bottom:16px">⌬</div>
+          <h3 style="font-family:var(--font-display);font-size:0.9rem;color:var(--purple);letter-spacing:0.1em;margin-bottom:12px">SELECTIVE LOYALTY</h3>
+          <p style="font-size:0.88rem;color:var(--text-dim);line-height:1.7">You're not easy to know and that's okay. But once someone earns your trust — once you let them in — you love with a kind of permanence that most people never experience from another human.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING NOTE -->
+  <section class="section" style="padding-top:0">
+    <div class="section-inner" style="max-width:720px">
+      <div class="quote-block reveal" style="border-color:var(--purple)">
+        <p>"The fact that you're here, reading this, at whatever hour it is, in whatever state you're in — means you're still curious about yourself. Still seeking. That's not nothing. That's actually everything."</p>
+        <cite>— L4B3D</cite>
+      </div>
+
+      <div class="reveal reveal-delay-2" style="margin-top:48px;display:flex;gap:16px;flex-wrap:wrap">
+        <a href="dark-times.html" class="btn btn-pink">Dark Times →</a>
+        <a href="the-archive.html" class="btn btn-ghost">The Archive →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">L4B3D</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="dark-times.html">Dark Times</a>
+      <a href="the-other-side.html">Other Side</a>
+      <a href="the-river.html">River</a>
+      <a href="the-archive.html">Archive</a>
+    </div>
+    <div class="footer-copy">Built for the ones between frequencies · Not for everyone · Only for you</div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
